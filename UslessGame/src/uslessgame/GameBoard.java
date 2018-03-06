@@ -41,7 +41,7 @@ public class GameBoard extends JPanel{
             }
         };
         
-        this.timer.scheduleAtFixedRate(task, 0, 800);
+        this.timer.scheduleAtFixedRate(task, 0, 600);
         
         setVisible(true);
     }
@@ -103,9 +103,23 @@ public class GameBoard extends JPanel{
         }
     }
     
+    int[] x1 = { 50, 100, 100};
+    int[] y1 = {  0,   0,  50};
+    int n1 = x1.length;
+    
+    int[] x2 = { 320, 320, 370};
+    int[] y2 = {   0,  50,   0};
+    int n2 = x2.length;
+    
     @Override
     public void paint( Graphics g){
         super.paint(g);
+        g.setColor( Color.LIGHT_GRAY);
+        g.fillPolygon(x1, y1, n1);
+        g.fillPolygon(x2, y2, n2);
+        g.fillRect( 100, 0, 220, 50);
+        
+        
         this.hero.Draw(g);
     }
 }

@@ -65,7 +65,7 @@ public class Hero extends JComponent{
                 break;
             
             case 4:
-                if( this.y - sizeJump >= 0)
+                if( this.y - sizeJump >= this.sizeJump)
                     this.y -= sizeJump;
                 break;
         }
