@@ -25,8 +25,8 @@ public class Hero extends JComponent{
     }
     
     public Hero( int x, int y) {
-        this.x = x;
-        this.y = y;
+        this.x = x * this.sizeJump;
+        this.y = y * this.sizeJump;
         this.loadImage();
     }
     
@@ -41,7 +41,7 @@ public class Hero extends JComponent{
     public boolean doMuveDown(){
         this.y += this.sizeJump;
         
-        if( y > this.height)
+        if( this.y + this.sizeJump> this.height)
             return false;
         
         return true;

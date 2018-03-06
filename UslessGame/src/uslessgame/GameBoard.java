@@ -21,6 +21,7 @@ public class GameBoard extends JPanel{
     
     
     Hero hero;
+    FloorPart[][] floor;
     
     Timer timer;
     TimerTask task;
@@ -30,18 +31,26 @@ public class GameBoard extends JPanel{
         setPreferredSize( new Dimension( this.width, this.height));
         setBackground( Color.BLACK);
         setKeyBindings();
-        
+
         this.hero = new Hero( 0, 0);
+        this.floor = new FloorPart[this.height/60][this.width/60];
+        
+        for( int f = 1; f < this.floor.length; ++f){
+            for( int g = 0; g < this.floor[f].length; ++g){
+                this.floor[f][g] = new FloorPart( g, f);
+            }
+        }
+        
         this.timer = new Timer(true);
         this.task = new TimerTask() {
             @Override
             public void run() {
-                //playerInGame();
+                playerInGame();
                 repaint();
             }
         };
         
-        this.timer.scheduleAtFixedRate(task, 0, 600);
+        this.timer.scheduleAtFixedRate(task, 0, 800);
         
         setVisible(true);
     }
@@ -50,6 +59,11 @@ public class GameBoard extends JPanel{
         if( !this.hero.doMuveDown()){
             this.timer.cancel();
             this.task.cancel();
+        }
+        for( int f = 1; f < this.floor.length; ++f){
+            for( int g = 0; g < this.floor[f].length; ++g){
+                this.floor[f][g].update();
+            }
         }
     }
     
@@ -113,13 +127,19 @@ public class GameBoard extends JPanel{
     
     @Override
     public void paint( Graphics g){
-        super.paint(g);
-        g.setColor( Color.LIGHT_GRAY);
-        g.fillPolygon(x1, y1, n1);
-        g.fillPolygon(x2, y2, n2);
-        g.fillRect( 100, 0, 220, 50);
+    super.paint(g);
         
+    for( int f = 1; f < this.floor.length; ++f){
+        for( int h = 0; h < this.floor[f].length; ++h){
+            this.floor[f][h].draw(g);
+        }
+    }
         
-        this.hero.Draw(g);
+    this.hero.Draw(g);
+
+    g.setColor( Color.LIGHT_GRAY);
+    g.fillPolygon( x1, y1, n1);
+    g.fillPolygon( x2, y2, n2);
+    g.fillRect( 100, 0, 220, 50);
     }
 }
