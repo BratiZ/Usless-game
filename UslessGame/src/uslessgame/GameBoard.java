@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.AbstractAction;
@@ -15,47 +14,50 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 public class GameBoard extends JPanel{
-    final String[] buttonsAcrionMap = {"space"};
+    final String[] buttonsAcrionMap = {"up", "down", "left", "right","w","s","a","d"};
     
-    final int width = 600,
-              height = 600;
+    final int width = GameFrame.WIN_WIDTH,
+              height = GameFrame.WIN_HEIGHT;
     
-    int FlyTime;
     
     Hero hero;
-    
-    boolean onFloor = true,
-            goUp = false;
     
     Timer timer;
     TimerTask task;
     
     public GameBoard(){
         super();
-        setPreferredSize( new Dimension( width, height));
-        setBackground( Color.WHITE);
+        setPreferredSize( new Dimension( this.width, this.height));
+        setBackground( Color.BLACK);
         setKeyBindings();
         
-        this.hero = new Hero(width/2-30, height-60);
+        this.hero = new Hero( 0, 0);
         this.timer = new Timer(true);
         this.task = new TimerTask() {
             @Override
             public void run() {
-                
+                //playerInGame();
                 repaint();
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 100);
+        
+        this.timer.scheduleAtFixedRate(task, 0, 800);
+        
         setVisible(true);
     }
     
-    private void updateHero(){
-        if( !this.goUp){
-            this.goUp = true;
+    private void playerInGame(){
+        if( !this.hero.doMuveDown()){
+            this.timer.cancel();
+            this.task.cancel();
         }
-        else if( )
     }
-
+    
+    private void heroMuve( int muve){
+        this.hero.upDate(muve);
+        repaint();
+    }
+    
     private void setKeyBindings(){
         InputMap inMap = this.getInputMap( JComponent.WHEN_IN_FOCUSED_WINDOW);
         
@@ -78,8 +80,24 @@ public class GameBoard extends JPanel{
         @Override
         public void actionPerformed(ActionEvent e) {
             switch(text){
-                case "space":
-                        updateHero();
+                case "up":
+                case "w":
+                    heroMuve(4);
+                    break;
+                    
+                case "down":
+                case "s":
+                    heroMuve(3);
+                    break;
+                    
+                case "left":
+                case "a":
+                    heroMuve(2);
+                    break;
+                    
+                case "right":
+                case "d":
+                    heroMuve(1);
                     break;
             }
         }

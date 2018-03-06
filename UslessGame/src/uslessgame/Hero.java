@@ -1,76 +1,77 @@
 package uslessgame;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Paint;
-import java.util.Random;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 
-public class Hero {
+public class Hero extends JComponent{
+    final int width = GameFrame.WIN_WIDTH,
+              height = GameFrame.WIN_HEIGHT,
+              sizeJump = 60;
+    
+    private Image heroImage = null;
+    
     private int x,
                 y;
     
     public Hero() {
-        this.x = 50;
-        this.y = 100;
+        this.x = 0;
+        this.y = 0;
+        this.loadImage();
     }
     
     public Hero( int x, int y) {
         this.x = x;
         this.y = y;
+        this.loadImage();
     }
     
-    public void upDate( int dx, int dy){
-        this.x -= dx;
-        this.y -= dy;
-        
+    private void loadImage(){
+        try {
+            this.heroImage = ImageIO.read( new File("hero.png"));
+        } catch (IOException e) {
+            System.out.println("Error L:30 C:HERO.java FAIL FILE READ");
+        }
     }
     
-    Color randColor(){
-        Random rand = new Random();
-        int color = rand.nextInt(10);
+    public boolean doMuveDown(){
+        this.y += this.sizeJump;
         
-        switch( color){
-            default:
-                return Color.WHITE;
-            case 0:
-                return Color.WHITE;
+        if( y > this.height)
+            return false;
+        
+        return true;
+    }
+    
+    public void upDate( int muve){
+        switch(muve){
             case 1:
-                return Color.GREEN;
+                if( this.x + this.sizeJump < this.width)
+                    this.x += sizeJump;
+                break;
+            
             case 2:
-                return Color.CYAN;
+                if( this.x - sizeJump >= 0)
+                    this.x -= sizeJump;
+                break;
+            
             case 3:
-                return Color.BLUE;
+                if( this.y + sizeJump < this.height)
+                    this.y += sizeJump;
+                break;
+            
             case 4:
-                return Color.RED;
-            case 5:
-                return Color.LIGHT_GRAY;
-            case 6:
-                return Color.MAGENTA;
-            case 7:
-                return Color.PINK;
-            case 8:
-                return Color.ORANGE;
-            case 9:
-                return Color.YELLOW;
+                if( this.y - sizeJump >= 0)
+                    this.y -= sizeJump;
+                break;
         }
     }
     
     public void Draw(Graphics g){
-        g.setColor( Color.BLACK);
-        g.fillRect(x, y, 60, 60);
-        
-        g.setColor( this.randColor());
-        g.fillOval(x+10, y+10, 10, 10);//lewe oko
-
-        g.setColor( this.randColor());
-        g.fillOval(x+40, y+10, 10, 10);//prawe oko
-
-        g.setColor( this.randColor());
-        g.fillRect(x+10, y+35, 40, 10);//usta
-        
-        g.setColor( Color.BLACK);
-        g.fillRect(x+45, y+40, 5, 5);//prawy koncik
-        g.fillRect(x+10, y+40, 5, 5);//lewy koncik
+        g.drawImage( heroImage, x, y, this);
     }
-    
 }
