@@ -1,67 +1,44 @@
 package uslessgame;
 
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 
-public class Hero extends JComponent{
+public class Hero {
     final int width = GameFrame.WIN_WIDTH,
-              height = GameFrame.WIN_HEIGHT,
-              sizeJump = 60;
+              height = GameFrame.WIN_HEIGHT;
     
-    private Image heroImage = null;
-    
-    private int x,
-                y;
+    int x,
+        y;
     
     public Hero() {
-        this.x = 0;
-        this.y = 60;
-        this.loadImage();
+        this.x = this.width/2;
+        this.y = this.height/2;
     }
     
-    public Hero( int x, int y) {
+    public Hero(int x, int y) {
         this.x = x;
         this.y = y;
-        this.loadImage();
     }
     
-    private void loadImage(){
-        try {
-            this.heroImage = ImageIO.read( new File("hero.png"));
-        } catch (IOException e) {
-            System.out.println("Error L:30 C:HERO.java FAIL FILE READ");
-        }
-    }
-    
-    public boolean doMuveDown(){
-        this.y += this.sizeJump;
+    public void draw( Graphics g){
         
-        if( this.y + this.sizeJump> this.height)
-            return false;
         
-        return true;
+        
+        g.setColor( Color.BLUE);
+        g.fillOval( x+30, y+10, 21, 21);
+        g.setColor( Color.BLACK);
+        g.drawOval( x+30, y+10, 21, 21);
+        
+        g.setColor( Color.BLUE);
+        g.fillOval( x-10, y+10, 21, 21);
+        g.setColor( Color.BLACK);
+        g.drawOval( x-10, y+10, 21, 21);
+        
+        g.setColor( Color.CYAN);
+        g.fillOval( x, y, 41, 41);
+        g.setColor( Color.BLACK);
+        g.drawOval( x, y, 41, 41);
     }
+
     
-    public void upDate( int muve){
-        switch(muve){
-            case 1:
-                if( this.x + this.sizeJump < this.width)
-                    this.x += 8;
-                break;
-            
-            case 2:
-                if( this.x - sizeJump >= 0)
-                    this.x -= 8;
-                break;
-        }
-    }
-    
-    public void Draw(Graphics g){
-        g.drawImage( heroImage, x, y, this);
-    }
 }

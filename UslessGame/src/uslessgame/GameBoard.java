@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.util.Timer;
+import java.util.Random;
 import java.util.TimerTask;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -12,47 +12,140 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
-public class GameBoard extends JPanel{
-    final String[] buttonsAcrionMap = { "left", "a", "right",  "d"};
+public class GameBoard extends JPanel {
+    final int width = 600,
+              height = 700;
     
-    final int width = GameFrame.WIN_WIDTH,
-              height = GameFrame.WIN_HEIGHT;
+    final String[] buttonsAcrionMap = {"left", "right", "up", "down"};
     
-    Hero hero;
+    private Hero hero;
+    private WayPart[][] way;
     
-    Timer timer;
-    TimerTask task;
+    private int[][] logicWay;
+    private int step,
+                tmpEndIndex;
     
+    private Timer timer;
+    private TimerTask task;
+    
+            
+            
     public GameBoard(){
         super();
         setPreferredSize( new Dimension( this.width, this.height));
         setBackground( Color.BLACK);
         setKeyBindings();
-
-        this.hero = new Hero();
-    
-        this.timer = new Timer(true);
-        this.task = new TimerTask() {
-            @Override
-            public void run() {
-                playerInGame();
-                repaint();
-            }
-        };
         
-        this.timer.scheduleAtFixedRate(task, 0, 800);
+        this.timer = new Timer( 1000, (ActionEvent ae) -> {
+            generateWay();
+            repaint();
+            step++;
+        });
+       
+        this.logicWay = new int[ this.height/50][this.width/50];
+        this.way = new WayPart[ this.height/50][this.width/50];
+        this.step = 0;
         
+        this.loadWay();
+        this.loadLogicWay();
+        
+        this.timer.start();
         setVisible(true);
     }
     
-    private void playerInGame(){
-        
+    
+    private void loadWay(){
+        for( int f = 0; f < this.way.length; ++f){
+            for( int h = 0; h < this.way[f].length; ++h){
+                this.way[f][h] = new WayPart(h,f);
+            }
+        }
+    }  
+    
+    private void loadLogicWay(){
+        for( int f = 0; f < this.way.length; ++f){
+            this.logicWay[f][6] = 1;
+        }
     }
     
-    private void heroMuve( int muve){
-        this.hero.upDate(muve);
-        repaint();
+    private void generateWay(){
+        int height = this.height/50,
+            width = this.width/50,
+            choose,
+            chooseSide;
+        
+        int endIndex = 0;
+        
+        boolean goUp = false;
+        
+        Random rand = new Random();
+        if( step%2 == 0){
+            this.muveLogicBoardDown();
+
+            while( this.logicWay[1][endIndex++] != 1 );
+            endIndex--;
+
+            this.logicWay[0][endIndex] = 1;
+
+            if( endIndex == 0){
+                while( !goUp ){
+                    choose = rand.nextInt(100);
+
+                    if( choose >= 20 && endIndex+1 < this.logicWay[0].length)
+                        this.logicWay[0][++endIndex] = 1;
+                    else
+                        goUp = true;
+                }
+            }
+            else if( endIndex == this.logicWay[0].length-1){
+                while( !goUp ){
+                    choose = rand.nextInt(100);
+
+                    if( choose >= 20 && endIndex-1 >= 0)
+                        this.logicWay[0][--endIndex] = 1;
+                    else
+                        goUp = true;
+                }
+            }
+            else{
+                chooseSide = rand.nextInt(2);
+                while( !goUp ){
+                    choose = rand.nextInt(100);
+
+                    if( chooseSide == 0){
+                        if( choose >= 20 && endIndex+1 < this.logicWay[0].length)
+                            this.logicWay[0][++endIndex] = 1;
+                        else
+                            goUp = true;
+                    }
+                    else{
+                        if( choose >= 20 && endIndex-1 > 0)
+                            this.logicWay[0][--endIndex] = 1;
+                        else
+                            goUp = true;
+                    }
+                }
+            }
+            this.tmpEndIndex = endIndex;
+        }
+        else{
+            this.muveLogicBoardDown();
+            this.logicWay[0][tmpEndIndex] = 1;
+        }
+    }
+    
+    private void muveLogicBoardDown(){
+        for( int f = this.logicWay.length-1; f > 0; --f){
+            for( int g = 0; g < this.logicWay[f].length; ++g){
+                this.logicWay[f][g] = this.logicWay[f-1][g];
+            }
+        }
+        
+        for( int f = 0; f < this.logicWay[0].length; ++f){
+             this.logicWay[0][f] = 0;
+        }
     }
     
     private void setKeyBindings(){
@@ -60,13 +153,14 @@ public class GameBoard extends JPanel{
         
         for( String f : this.buttonsAcrionMap)
             inMap.put( KeyStroke.getKeyStroke( f.toUpperCase()), f);
+         
         
         ActionMap ActMap = this.getActionMap();
         
         for( String f : this.buttonsAcrionMap)
             ActMap.put( f, new ActClass(f));
     }
-    
+
     class ActClass extends AbstractAction{
         String text = "";
 
@@ -76,36 +170,37 @@ public class GameBoard extends JPanel{
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            String left = buttonsAcrionMap[0];
-            String right = buttonsAcrionMap[2];
-
-            if( text.equals( buttonsAcrionMap[0]) || text.equals( buttonsAcrionMap[1])){
-                heroMuve(2);
-            }
-            
-            if( text.equals( buttonsAcrionMap[2]) || text.equals( buttonsAcrionMap[3])){
-                heroMuve(1);                
+            if( text == "left"){
+                System.out.println("space");
             }
         }
     }
     
-    int[] x1 = { 50, 100, 100};
-    int[] y1 = {  0,   0,  50};
-    int n1 = x1.length;
-    
-    int[] x2 = { 320, 320, 370};
-    int[] y2 = {   0,  50,   0};
-    int n2 = x2.length;
-    
     @Override
     public void paint( Graphics g){
-    super.paint(g);
+        super.paint(g);
         
-    this.hero.Draw(g);
-
-    g.setColor( Color.LIGHT_GRAY);
-    g.fillPolygon( x1, y1, n1);
-    g.fillPolygon( x2, y2, n2);
-    g.fillRect( 100, 0, 220, 50);
+        for( int f = 0; f < this.logicWay.length; ++f){
+            for( int h = 0; h < this.logicWay[f].length; ++h){
+                if( this.logicWay[f][h] == 1){
+                    this.way[f][h].draw(g);
+                }
+            }
+        }
+        
+    }
+    
+    @Override
+    public String toString(){
+        String resoult = "";
+        
+        for( int f = 0; f < this.logicWay.length; ++f){
+            for( int h = 0; h < this.logicWay[f].length; ++h){
+                resoult += this.logicWay[f][h];
+            }
+            resoult += "\n";
+        }
+        
+        return resoult;
     }
 }
