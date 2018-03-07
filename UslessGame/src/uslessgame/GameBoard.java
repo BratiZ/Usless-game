@@ -14,14 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
 public class GameBoard extends JPanel{
-    final String[] buttonsAcrionMap = {"up", "down", "left", "right","w","s","a","d"};
+    final String[] buttonsAcrionMap = { "left", "a", "right",  "d"};
     
     final int width = GameFrame.WIN_WIDTH,
               height = GameFrame.WIN_HEIGHT;
     
-    
     Hero hero;
-    FloorPart[][] floor;
     
     Timer timer;
     TimerTask task;
@@ -32,15 +30,8 @@ public class GameBoard extends JPanel{
         setBackground( Color.BLACK);
         setKeyBindings();
 
-        this.hero = new Hero( 0, 0);
-        this.floor = new FloorPart[this.height/60][this.width/60];
-        
-        for( int f = 1; f < this.floor.length; ++f){
-            for( int g = 0; g < this.floor[f].length; ++g){
-                this.floor[f][g] = new FloorPart( g, f);
-            }
-        }
-        
+        this.hero = new Hero();
+    
         this.timer = new Timer(true);
         this.task = new TimerTask() {
             @Override
@@ -56,15 +47,7 @@ public class GameBoard extends JPanel{
     }
     
     private void playerInGame(){
-        if( !this.hero.doMuveDown()){
-            this.timer.cancel();
-            this.task.cancel();
-        }
-        for( int f = 1; f < this.floor.length; ++f){
-            for( int g = 0; g < this.floor[f].length; ++g){
-                this.floor[f][g].update();
-            }
-        }
+        
     }
     
     private void heroMuve( int muve){
@@ -93,26 +76,15 @@ public class GameBoard extends JPanel{
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch(text){
-                case "up":
-                case "w":
-                    heroMuve(4);
-                    break;
-                    
-                case "down":
-                case "s":
-                    heroMuve(3);
-                    break;
-                    
-                case "left":
-                case "a":
-                    heroMuve(2);
-                    break;
-                    
-                case "right":
-                case "d":
-                    heroMuve(1);
-                    break;
+            String left = buttonsAcrionMap[0];
+            String right = buttonsAcrionMap[2];
+
+            if( text.equals( buttonsAcrionMap[0]) || text.equals( buttonsAcrionMap[1])){
+                heroMuve(2);
+            }
+            
+            if( text.equals( buttonsAcrionMap[2]) || text.equals( buttonsAcrionMap[3])){
+                heroMuve(1);                
             }
         }
     }
@@ -128,12 +100,6 @@ public class GameBoard extends JPanel{
     @Override
     public void paint( Graphics g){
     super.paint(g);
-        
-    for( int f = 1; f < this.floor.length; ++f){
-        for( int h = 0; h < this.floor[f].length; ++h){
-            this.floor[f][h].draw(g);
-        }
-    }
         
     this.hero.Draw(g);
 

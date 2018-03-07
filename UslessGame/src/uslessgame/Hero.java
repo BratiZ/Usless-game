@@ -20,13 +20,13 @@ public class Hero extends JComponent{
     
     public Hero() {
         this.x = 0;
-        this.y = 0;
+        this.y = 60;
         this.loadImage();
     }
     
     public Hero( int x, int y) {
-        this.x = x * this.sizeJump;
-        this.y = y * this.sizeJump;
+        this.x = x;
+        this.y = y;
         this.loadImage();
     }
     
@@ -51,22 +51,12 @@ public class Hero extends JComponent{
         switch(muve){
             case 1:
                 if( this.x + this.sizeJump < this.width)
-                    this.x += sizeJump;
+                    this.x += 8;
                 break;
             
             case 2:
                 if( this.x - sizeJump >= 0)
-                    this.x -= sizeJump;
-                break;
-            
-            case 3:
-                if( this.y + sizeJump < this.height)
-                    this.y += sizeJump;
-                break;
-            
-            case 4:
-                if( this.y - sizeJump >= this.sizeJump)
-                    this.y -= sizeJump;
+                    this.x -= 8;
                 break;
         }
     }
