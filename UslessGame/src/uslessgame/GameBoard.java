@@ -15,10 +15,16 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class GameBoard extends JPanel {
-    final int width = 600,
-              height = 700;
+    final int width = 500,
+              height = 600;
     
     final String[] buttonsAcrionMap = {"left", "right", "up", "down"};
+    
+    //rules
+    private int maxLeftTiles = 3,
+                maxRightTiles = 3,
+                maxUpTiles = 3;
+    
     
     private Hero hero;
     private WayPart[][] way;
@@ -38,7 +44,7 @@ public class GameBoard extends JPanel {
         setBackground( Color.BLACK);
         setKeyBindings();
         
-        this.timer = new Timer( 1000, (ActionEvent ae) -> {
+        this.timer = new Timer( 80, (ActionEvent ae) -> {
             generateWay();
             repaint();
             step++;
